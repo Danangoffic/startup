@@ -3,7 +3,6 @@ package main
 import (
 	"bwastartup/handler"
 	"bwastartup/user"
-	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -24,19 +23,7 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-
-	input := user.LoginInput{
-		Email:    "danang.rahmanda@gmail.com",
-		Password: "password12",
-	}
-	user, err := userService.Login(input)
-	if err != nil {
-		fmt.Println("Terjadi kesalahan")
-		fmt.Println(err.Error())
-	}
-	fmt.Println(user.Email)
-	fmt.Println(user.Name)
-
+	// get user handler
 	userHandler := handler.NewUserHandler(userService)
 	// untuk penggunaan api
 	router := gin.Default()
@@ -48,6 +35,7 @@ func main() {
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checker", userHandler.CheckEmailAvailability)
+	api.POST("/avatars", userHandler.UploadAvatar)
 
 	router.Run()
 }
