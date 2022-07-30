@@ -3,6 +3,7 @@ package main
 import (
 	"bwastartup/handler"
 	"bwastartup/user"
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -24,13 +25,17 @@ func main() {
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
 
-	// userInput := user.RegisterUserInput{}
-	// userInput.Name = "Riselda Lalusu"
-	// userInput.Email = "riselda@gmail.com"
-	// userInput.Occupation = "Senior Programmer"
-	// userInput.Password = "cobapassword"
-
-	// userService.RegisterUser(userInput)
+	input := user.LoginInput{
+		Email:    "danang.rahmanda@gmail.com",
+		Password: "password12",
+	}
+	user, err := userService.Login(input)
+	if err != nil {
+		fmt.Println("Terjadi kesalahan")
+		fmt.Println(err.Error())
+	}
+	fmt.Println(user.Email)
+	fmt.Println(user.Name)
 
 	userHandler := handler.NewUserHandler(userService)
 	// untuk penggunaan api
@@ -41,13 +46,7 @@ func main() {
 
 	// api list
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/sessions", userHandler.Login)
 
 	router.Run()
-	// userRepository.Save(user)
-
-	// input dari user
-	// handler : mapping input user menjadi sebuah struct inpput
-	// service : mapping struct input ke struct User
-	// repository
-	// db
 }
