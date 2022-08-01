@@ -157,8 +157,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	}
 
 	// save file to directory and get name
-	// harusnya dapet dari JWT, hardcoded dulu
-	UserId := 1
+	currentUser := c.MustGet("currentUser").(user.User)
+	UserId := currentUser.ID
 	// path := "images/" + file.Filename
 	// update file name to "images/{userId}-filename"
 	path := fmt.Sprintf("images/%d-%s", UserId, file.Filename)
