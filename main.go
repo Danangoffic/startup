@@ -30,20 +30,13 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
-	campaigns, err := campaignRepository.FindByUserId(1)
-	fmt.Println("debug campaigns")
-	fmt.Println("debug campaigns")
-	fmt.Println("debug campaigns")
-	fmt.Println(len(campaigns))
-
-	for _, campaign := range campaigns {
-		fmt.Println(campaign.Name)
-		if len(campaign.CampaignImages) > 0 {
-			fmt.Println(campaign.CampaignImages[0].FileName)
-		}
-	}
 
 	userService := user.NewService(userRepository)
+	campaignService := campaign.NewService(campaignRepository)
+	campaigns, _ := campaignService.FindCampaigns(3)
+
+	fmt.Println(len(campaigns))
+
 	authService := auth.NewService()
 	// get user handler yang akan dipakai pada api routes
 	userHandler := handler.NewUserHandler(userService, authService)
