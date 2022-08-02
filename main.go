@@ -6,7 +6,6 @@ import (
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/user"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -33,13 +32,10 @@ func main() {
 
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
-	campaigns, _ := campaignService.FindCampaigns(3)
-
-	fmt.Println(len(campaigns))
-
 	authService := auth.NewService()
 	// get user handler yang akan dipakai pada api routes
 	userHandler := handler.NewUserHandler(userService, authService)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 	// untuk penggunaan api dari gin
 	router := gin.Default()
 	// api target with version
@@ -49,6 +45,8 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checker", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
+	api.GET("/campaigns", campaignHandler.FindCampaigns)
 
 	router.Run()
 }
