@@ -33,13 +33,12 @@ func (h *campaignHandler) FindCampaigns(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+	message := "List of campaigns"
 	if len(campaigns) == 0 {
-		response := helper.APIResponse("Campaigns not found", http.StatusNotFound, "failed", nil)
-		c.JSON(http.StatusNotFound, response)
-		return
+		message = "Campaigns is empty"
 	}
 	// success
-	response := helper.APIResponse("List of campaigns", http.StatusOK, "success", campaigns)
+	response := helper.APIResponse(message, http.StatusOK, "success", campaigns)
 	c.JSON(http.StatusOK, response)
 	return
 }
