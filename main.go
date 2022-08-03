@@ -38,6 +38,7 @@ func main() {
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	// untuk penggunaan api dari gin
 	router := gin.Default()
+	router.Static("/images", "./images")
 	// api target with version
 	api := router.Group("/api/v1")
 	// api list
