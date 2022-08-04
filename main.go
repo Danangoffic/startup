@@ -33,6 +33,7 @@ func main() {
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
 	authService := auth.NewService()
+
 	// get user handler yang akan dipakai pada api routes
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
@@ -46,6 +47,7 @@ func main() {
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checker", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 
 	api.GET("/campaigns", campaignHandler.FindCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
