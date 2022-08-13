@@ -5,6 +5,7 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/handler"
 	"bwastartup/helper"
+	"bwastartup/payment"
 	"bwastartup/transaction"
 	"bwastartup/user"
 	"log"
@@ -36,8 +37,25 @@ func main() {
 	// SERVICE LIST
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
-	transactionService := transaction.NewService(transactionRepository, campaignRepository)
+	paymentService := payment.NewService()
+	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 	authService := auth.NewService()
+
+	// userInput, _ := userService.GetUserByID(2)
+	// fmt.Println("user : ", userInput)
+
+	// inputTransaction := transaction.CreateTransactionInput{
+	// 	CampaignId: 5,
+	// 	Amount:     100000000,
+	// 	User:       userInput,
+	// }
+	// fmt.Println("input transaction : ", inputTransaction)
+
+	// newTransaction, err := transactionService.CreateTransaction(inputTransaction)
+	// if err != nil {
+	// 	fmt.Println("error create transaction", err.Error())
+	// }
+	// fmt.Println("success create a new transaction", newTransaction)
 
 	// HANDLER LIST
 	// get user handler yang akan dipakai pada api routes
@@ -69,6 +87,7 @@ func main() {
 	// TRANSACTIONS API
 	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransactions)
+	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	// api.DELETE("/campaign-images/:id", authMiddleware(authService, userService), campaignHandler.DeleteCampaignImage)
 
 	router.Run()

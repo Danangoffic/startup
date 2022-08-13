@@ -13,6 +13,8 @@ func NewRepository(db *gorm.DB) *repository {
 type Repository interface {
 	FindByCampaignId(campaignID int) ([]Transaction, error)
 	FindByUserId(userId int) ([]Transaction, error)
+	Save(transaction Transaction) (Transaction, error)
+	Update(transaction Transaction) (Transaction, error)
 }
 
 // To find transactions by campaign id, ordered by descending id
@@ -32,4 +34,20 @@ func (r *repository) FindByUserId(userId int) ([]Transaction, error) {
 		return transactions, err
 	}
 	return transactions, nil
+}
+
+func (r *repository) Save(transaction Transaction) (Transaction, error) {
+	err := r.db.Create(&transaction).Error
+	if err != nil {
+		return transaction, err
+	}
+	return transaction, nil
+}
+
+func (r *repository) Update(transaction Transaction) (Transaction, error) {
+	err := r.db.Save(&transaction).Error
+	if err != nil {
+		return transaction, err
+	}
+	return transaction, nil
 }

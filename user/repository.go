@@ -48,7 +48,7 @@ func (r *repository) FindByid(id int) (User, error) {
 }
 
 func (r *repository) Update(user User) (User, error) {
-	err := r.db.Save(user).Error
+	err := r.db.Save(&user).Error
 	if err != nil {
 		return user, err
 	}

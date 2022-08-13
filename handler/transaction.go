@@ -61,8 +61,32 @@ func (h *TransactionHandler) GetUserTransactions(c *gin.Context) {
 	return
 }
 
-// GetUserTransactions
-// handler
-// ambil nilai user dari JWT / middleware
-// service
-// repository => ambil data transactions with preload campaign
+func (h *TransactionHandler) CreateTransaction(c *gin.Context) {
+	var input transaction.CreateTransactionInput
+
+	err := c.ShouldBindJSON(&input)
+
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Failed to create a Transaction", http.StatusUnprocessableEntity, "failed", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// get user authentication
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	newTransaction, err := h.service.CreateTransaction(input)
+
+	if err != nil {
+		response := helper.APIResponse("Failed to create a Transaction", http.StatusBadRequest, "failed", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Success to create a Transaction", http.StatusOK, "success", transaction.FormatTransaction(newTransaction))
+	c.JSON(http.StatusOK, response)
+
+}

@@ -81,7 +81,9 @@ func (h *campaignHandler) CreateCampaign(c *gin.Context) {
 	// bind data in JSON and get input validation
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		response := helper.APIResponse("Failed to create a campaign", http.StatusUnprocessableEntity, "failed", nil)
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Failed to create a campaign", http.StatusUnprocessableEntity, "failed", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
