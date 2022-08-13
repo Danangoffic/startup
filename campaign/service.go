@@ -13,6 +13,8 @@ type Service interface {
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
 	UpdateCampaign(inputID GetCampaignDetailInput, inputData CreateCampaignInput) (Campaign, error)
 	SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error)
+	GetCampaignImageById(ID int) (CampaignImage, error)
+	DeleteCampaignImage(input GetCampaignImageDetailInput) (bool, error)
 }
 
 type service struct {
@@ -123,4 +125,44 @@ func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation
 		return newCampaignImage, err
 	}
 	return newCampaignImage, nil
+}
+
+func (s *service) GetCampaignImageById(ID int) (CampaignImage, error) {
+	campaignImage, err := s.repository.FindCampaignImageById(ID)
+	if err != nil {
+		return CampaignImage{}, err
+	}
+	return campaignImage, nil
+}
+
+func (s *service) DeleteCampaignImage(input GetCampaignImageDetailInput) (bool, error) {
+
+	campaignImage, err := s.repository.FindCampaignImageById(input.ID)
+	if err != nil {
+		return false, err
+	}
+
+	campaign, _ := s.repository.FindById(campaignImage.CampaignId)
+
+	_, err = s.repository.DeleteCampaignImage(campaignImage)
+	if err != nil {
+		return false, err
+	}
+
+	isDeletedPrimary := campaignImage.IsPrimary
+
+	if isDeletedPrimary == 1 {
+		var i = 0
+		for _, v := range campaign.CampaignImages {
+			if i == 0 {
+				_, err2 := s.repository.MarkAllImagesAsNonPrimary(v.CampaignId)
+				if err2 != nil {
+					return false, err2
+				}
+			}
+			i++
+		}
+	}
+
+	return true, nil
 }

@@ -6,6 +6,7 @@ import (
 	"bwastartup/user"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -169,7 +170,6 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
 	// store file to specified directory and set/get name
 	// path := "images/campaign/" + file.Filename
 	// update file name to "images/campaign/{userId}-{input.CampaignId}-{file.Filename}"
@@ -183,8 +183,11 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 	}
 	// passing input struct and path data to service
 	_, err = h.service.SaveCampaignImage(input, path)
-
 	if err != nil {
+		errPath := os.Remove(path)
+		if errPath != nil {
+			fmt.Println("failed to remove file caused " + errPath.Error())
+		}
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIResponse("Failed to upload campaign image. "+err.Error(), http.StatusBadRequest, "error", data)
 		c.JSON(http.StatusBadRequest, response)
@@ -193,5 +196,70 @@ func (h *campaignHandler) UploadImage(c *gin.Context) {
 
 	data := gin.H{"is_uploaded": true}
 	response := helper.APIResponse("Successfuly to upload campaign image", http.StatusOK, "success", data)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *campaignHandler) DeleteCampaignImage(c *gin.Context) {
+	var input campaign.GetCampaignImageDetailInput
+
+	err := c.ShouldBindUri(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Failed to delete campaign image", http.StatusBadRequest, "failed", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+	}
+
+	// get current user authentication
+	currentUser := c.MustGet("currentUser").(user.User)
+	fmt.Println(currentUser)
+	userId := currentUser.ID
+
+	campaignImage, err := h.service.GetCampaignImageById(input.ID)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Campaign image is not found", http.StatusNotFound, "failed", errorMessage)
+		c.JSON(http.StatusNotFound, response)
+	}
+
+	var campaignDetail campaign.GetCampaignDetailInput
+	campaignDetail.ID = campaignImage.ID
+	campaign, err := h.service.GetCampaignById(campaignDetail)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Campaign image is not related with any campaign", http.StatusNotFound, "failed", errorMessage)
+		c.JSON(http.StatusNotFound, response)
+		return
+	}
+
+	fmt.Println("campaign user id : ", campaign.UsersID)
+	fmt.Println("user id", userId)
+	fmt.Println("is same : ", campaign.UsersID == userId)
+
+	if campaign.UsersID != userId {
+		errorMessage := gin.H{"errors": "Unauthorized"}
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "failed", errorMessage)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	_, err = h.service.DeleteCampaignImage(input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Failed to delete campaign image", http.StatusBadRequest, "failed", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	errRemoveFile := os.Remove(campaignImage.FileName)
+	if errRemoveFile != nil {
+		errorMessage := gin.H{"errors": "failed to removing file"}
+		response := helper.APIResponse("Failed to removing file", http.StatusConflict, "failed", errorMessage)
+		c.JSON(http.StatusConflict, response)
+	}
+	data := gin.H{"is_deleted": true}
+	response := helper.APIResponse("Successfuly to delete campaign image", http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 }
