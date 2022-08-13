@@ -16,6 +16,7 @@ func NewService(repository Repository, campaignRepository campaign.Repository) *
 
 type Service interface {
 	GetCampaignTransactions(input GetCampaignTransactionsInput) ([]Transaction, error)
+	GetUserTransactions(userId int) ([]Transaction, error)
 }
 
 func (s *service) GetCampaignTransactions(input GetCampaignTransactionsInput) ([]Transaction, error) {
@@ -35,6 +36,14 @@ func (s *service) GetCampaignTransactions(input GetCampaignTransactionsInput) ([
 	transactions, err := s.repository.FindByCampaignId(input.ID)
 	if err != nil {
 		return []Transaction{}, err
+	}
+	return transactions, nil
+}
+
+func (s *service) GetUserTransactions(userId int) ([]Transaction, error) {
+	transactions, err := s.repository.FindByUserId(userId)
+	if err != nil {
+		return transactions, err
 	}
 	return transactions, nil
 }
