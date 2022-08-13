@@ -1,6 +1,9 @@
 package transaction
 
-import "time"
+import (
+	"bwastartup/user"
+	"time"
+)
 
 type Transaction struct {
 	ID         int
@@ -11,4 +14,5 @@ type Transaction struct {
 	Code       string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
+	User       user.User `gorm:"foreignKey:UserID"`
 }

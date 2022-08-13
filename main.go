@@ -5,6 +5,7 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/handler"
 	"bwastartup/helper"
+	"bwastartup/transaction"
 	"bwastartup/user"
 	"log"
 	"net/http"
@@ -27,33 +28,46 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	// REPOSITORY LIST
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
+	transactionRepository := transaction.NewRepository(db)
 
+	// SERVICE LIST
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
+	transactionService := transaction.NewService(transactionRepository, campaignRepository)
 	authService := auth.NewService()
 
+	// HANDLER LIST
 	// get user handler yang akan dipakai pada api routes
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
+
+	// API LIST
 	// untuk penggunaan api dari gin
 	router := gin.Default()
+	// static for image api
 	router.Static("/images", "./images")
 	// api target with version
 	api := router.Group("/api/v1")
-	// api list
-	//user
+
+	// USERS API
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checker", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
-	// campaign
+
+	// CAMPAIGNS API
 	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 	api.GET("/campaigns", campaignHandler.FindCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
+
+	// TRANSACTIONS API
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
 	// api.DELETE("/campaign-images/:id", authMiddleware(authService, userService), campaignHandler.DeleteCampaignImage)
 
 	router.Run()
@@ -101,10 +115,3 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		c.Set("currentUser", user)
 	}
 }
-
-// ambil nilai header Authorization. ex: Bearer tokentokentoken
-// dari nilai header Authorization, get token value only
-// validasi token
-// get user id from token
-// get user by id in database via service
-// set context isinya user
