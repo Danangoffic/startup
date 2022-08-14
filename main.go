@@ -37,7 +37,7 @@ func main() {
 	// SERVICE LIST
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
-	paymentService := payment.NewService()
+	paymentService := payment.NewService(transactionRepository, campaignRepository)
 	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 	authService := auth.NewService()
 
@@ -61,7 +61,7 @@ func main() {
 	// get user handler yang akan dipakai pada api routes
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
-	transactionHandler := handler.NewTransactionHandler(transactionService)
+	transactionHandler := handler.NewTransactionHandler(transactionService, paymentService)
 
 	// API LIST
 	// untuk penggunaan api dari gin
@@ -88,6 +88,7 @@ func main() {
 	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransactions)
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
+	api.POST("/transactions/notification", transactionHandler.GetNotification)
 	// api.DELETE("/campaign-images/:id", authMiddleware(authService, userService), campaignHandler.DeleteCampaignImage)
 
 	router.Run()
