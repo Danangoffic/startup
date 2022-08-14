@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -37,35 +38,20 @@ func main() {
 	// SERVICE LIST
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
-	paymentService := payment.NewService(transactionRepository, campaignRepository)
+	paymentService := payment.NewService()
 	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 	authService := auth.NewService()
-
-	// userInput, _ := userService.GetUserByID(2)
-	// fmt.Println("user : ", userInput)
-
-	// inputTransaction := transaction.CreateTransactionInput{
-	// 	CampaignId: 5,
-	// 	Amount:     100000000,
-	// 	User:       userInput,
-	// }
-	// fmt.Println("input transaction : ", inputTransaction)
-
-	// newTransaction, err := transactionService.CreateTransaction(inputTransaction)
-	// if err != nil {
-	// 	fmt.Println("error create transaction", err.Error())
-	// }
-	// fmt.Println("success create a new transaction", newTransaction)
 
 	// HANDLER LIST
 	// get user handler yang akan dipakai pada api routes
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
-	transactionHandler := handler.NewTransactionHandler(transactionService, paymentService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	// API LIST
 	// untuk penggunaan api dari gin
 	router := gin.Default()
+	router.Use(cors.Default())
 	// static for image api
 	router.Static("/images", "./images")
 	// api target with version

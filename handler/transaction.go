@@ -2,7 +2,6 @@ package handler
 
 import (
 	"bwastartup/helper"
-	"bwastartup/payment"
 	"bwastartup/transaction"
 	"bwastartup/user"
 	"net/http"
@@ -11,12 +10,11 @@ import (
 )
 
 type TransactionHandler struct {
-	service        transaction.Service
-	paymentService payment.Service
+	service transaction.Service
 }
 
-func NewTransactionHandler(service transaction.Service, paymentService payment.Service) *TransactionHandler {
-	return &TransactionHandler{service, paymentService}
+func NewTransactionHandler(service transaction.Service) *TransactionHandler {
+	return &TransactionHandler{service}
 }
 
 func (h *TransactionHandler) GetCampaignTransactions(c *gin.Context) {
@@ -103,7 +101,7 @@ func (h *TransactionHandler) GetNotification(c *gin.Context) {
 		return
 	}
 
-	err = h.paymentService.ProcessPayment(input)
+	err = h.service.ProcessPayment(input)
 	if err != nil {
 		response := helper.APIResponse("Failed to process notification", http.StatusBadRequest, "failed", nil)
 		c.JSON(http.StatusBadRequest, response)
