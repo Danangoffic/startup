@@ -2,20 +2,55 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CMS STARTUP - {{.title}}</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/css/fontawesome/css/all.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/css/adminlte.css">
 </head>
 
-<body>
-    <div>
-        belajar golang CMS
-    </div>
+<body class="hold-transition sidebar-mini">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+        <!-- Navbar -->
+        {{ template "navbar.html" }}
+        <!-- /.navbar -->
 
-    <div>
-        {{ template "content" .}}
+        <!-- Main Sidebar Container -->
+        {{ template "sidebar.html" .}}
+
+        <!-- Content Wrapper. Contains page content -->
+
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            {{ template "content".}}
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+        {{ template "footer.html" }}
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
     </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <!-- <script src="../../dist/js/demo.js"></script> -->
 </body>
 
 </html>

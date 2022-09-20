@@ -51,7 +51,7 @@ func main() {
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
-	userWebHandler := webHandler.NewUserHandler()
+	userWebHandler := webHandler.NewUserHandler(userService)
 	// API LIST
 	// untuk penggunaan api dari gin
 	router := gin.Default()
@@ -60,6 +60,9 @@ func main() {
 	router.HTMLRender = loadTemplates("./web/templates")
 	// static for image api
 	router.Static("/images", "./images")
+	router.Static("/css", "./web/assets/css")
+	router.Static("/js", "./web/assets/js")
+	router.Static("/webfonts", "./web/assets/webfonts")
 	// api target with version
 	api := router.Group("/api/v1")
 
@@ -85,6 +88,8 @@ func main() {
 	// api.DELETE("/campaign-images/:id", authMiddleware(authService, userService), campaignHandler.DeleteCampaignImage)
 
 	router.GET("/users", userWebHandler.Index)
+	router.GET("/users/new", userWebHandler.New)
+	router.POST("/users", userWebHandler.Create)
 
 	router.Run()
 }

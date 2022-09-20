@@ -10,6 +10,7 @@ type Repository interface {
 	FindByEmail(email string) (User, error)
 	FindByid(id int) (User, error)
 	Update(user User) (User, error)
+	FindAll() ([]User, error)
 }
 
 // repository struct user
@@ -53,4 +54,14 @@ func (r *repository) Update(user User) (User, error) {
 		return user, err
 	}
 	return user, nil
+}
+
+func (r *repository) FindAll() ([]User, error) {
+	var users []User
+
+	err := r.db.Find(&users).Error
+	if err != nil {
+		return users, err
+	}
+	return users, nil
 }
