@@ -34,7 +34,7 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Occupation</th>
-                            <th>Action</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,6 +48,7 @@
                             <td>{{.Occupation}}</td>
                             <td>
                                 <a href="/users/edit/{{.ID}}" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></a>
+                                <a href="/users/avatar/{{.ID}}" class="btn btn-success btn-sm"><i class="fa fa-camera"></i></a>
                             </td>
                         </tr>
                         {{ end }}
