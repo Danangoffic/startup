@@ -28,4 +28,5 @@ type FormUpdateUserInput struct {
 	Name       string `form:"name" binding:"required"`
 	Occupation string `form:"occupation" binding:"required"`
 	Email      string `form:"email" binding:"required,email"`
+	Error      error
 }

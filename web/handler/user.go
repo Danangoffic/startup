@@ -69,7 +69,13 @@ func (h *userHandler) Edit(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "error.html", nil)
 		return
 	}
-	c.HTML(http.StatusOK, "user_edit.html", registeredUser)
+
+	input := user.FormUpdateUserInput{}
+	input.Name = registeredUser.Name
+	input.Email = registeredUser.Email
+	input.ID = registeredUser.ID
+	input.Occupation = registeredUser.Occupation
+	c.HTML(http.StatusOK, "user_edit.html", input)
 }
 
 func (h *userHandler) Update(c *gin.Context) {
