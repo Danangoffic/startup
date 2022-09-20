@@ -78,9 +78,9 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 	campaignDetailFormatter.BackerCount = campaign.BackerCount
 	campaignDetailFormatter.Slug = campaign.Slug
 	campaignDetailFormatter.ImageURL = ""
-	if len(campaign.CampaignImages) > 0 {
-		campaignDetailFormatter.ImageURL = campaign.CampaignImages[0].FileName
-	}
+	// if len(campaign.CampaignImages) > 0 {
+	// 	campaignDetailFormatter.ImageURL = campaign.CampaignImages[0].FileName
+	// }
 
 	var perks []string
 	for _, perk := range strings.Split(campaign.Perks, ",") {
@@ -104,6 +104,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 		isPrimary := false
 		if image.IsPrimary == 1 {
 			isPrimary = true
+			campaignDetailFormatter.ImageURL = image.FileName
 		}
 		imageFormatter.IsPrimary = isPrimary
 		images = append(images, imageFormatter)

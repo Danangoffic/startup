@@ -43,6 +43,9 @@ func (s *service) GetCampaigns(userId int) ([]Campaign, error) {
 
 func (s *service) GetCampaignById(input GetCampaignDetailInput) (Campaign, error) {
 	campaign, err := s.repository.FindById(input.ID)
+	if campaign.Name == "" {
+		return Campaign{}, errors.New("Campaign Not Found")
+	}
 	if err != nil {
 		return campaign, err
 	}
