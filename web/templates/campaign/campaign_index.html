@@ -3,13 +3,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>List of Users</h1>
-                <a href="/users/new" class="btn btn-primary btn-sm mt-2"><i class="fa fa-plus"></i> Create User</a>
+                <h1>List of Campaigns</h1>
+                <a href="/campaigns/new" class="btn btn-primary btn-sm mt-2"><i class="fa fa-plus"></i> Create Campaign</a>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <!-- <li class="breadcrumb-item"><a href="#">Home</a></li> -->
-                    <li class="breadcrumb-item active">Users</li>
+                    <li class="breadcrumb-item active">Campaigns</li>
                 </ol>
             </div>
         </div>
@@ -31,24 +30,24 @@
                     <thead class="thead-light">
                         <tr>
                             <th></th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Occupation</th>
+                            <th>Campaign Name</th>
+                            <th>Short Description</th>
+                            <th>Goal Amout</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {{range .users}}
+                        {{range .campaigns}}
                         <tr>
                             <td>
-                                <img class="img-fluid img-thumbnail" src="{{.AvatarFileName}}" alt="Avatar {{.Name}}" width="60">
+                                {{ if .CampaignImages }}
+                                <img src="/{{ (index .CampaignImages 0).FileName }}" class="img-fluid img-thumbnail" alt="" width="80"> {{end}}
                             </td>
                             <td>{{.Name}}</td>
-                            <td>{{.Email}}</td>
-                            <td>{{.Occupation}}</td>
+                            <td>{{.ShortDescription}}</td>
+                            <td>{{.GoalAmount}}</td>
                             <td>
-                                <a href="/users/edit/{{.ID}}" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></a>
-                                <a href="/users/avatar/{{.ID}}" class="btn btn-success btn-sm"><i class="fa fa-camera"></i></a>
+                                <a href="/campaign/edit/{{.ID}}" class="btn btn-success btn-sm"><i class="fa fa-edit"></i></a>
                             </td>
                         </tr>
                         {{ end }}

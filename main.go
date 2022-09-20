@@ -51,7 +51,10 @@ func main() {
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
+
+	//web admin handler
 	userWebHandler := webHandler.NewUserHandler(userService)
+	campaignWebHandler := webHandler.NewCampaignHandler(campaignService)
 	// API LIST
 	// untuk penggunaan api dari gin
 	router := gin.Default()
@@ -87,6 +90,7 @@ func main() {
 	api.POST("/transactions/notification", transactionHandler.GetNotification)
 	// api.DELETE("/campaign-images/:id", authMiddleware(authService, userService), campaignHandler.DeleteCampaignImage)
 
+	// web admin routers
 	router.GET("/users", userWebHandler.Index)
 	router.GET("/users/new", userWebHandler.New)
 	router.POST("/users", userWebHandler.Create)
@@ -94,6 +98,8 @@ func main() {
 	router.POST("/users/update/:id", userWebHandler.Update)
 	router.GET("/users/avatar/:id", userWebHandler.NewAvatar)
 	router.POST("/users/avatar/:id", userWebHandler.CreateAvatar)
+
+	router.GET("/campaigns", campaignWebHandler.Index)
 
 	router.Run()
 }

@@ -24,17 +24,12 @@ func (h *userHandler) Index(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "user_index.html", gin.H{
-		"page":  "user",
 		"users": users,
-		"title": "List of Users",
 	})
 }
 
 func (h *userHandler) New(c *gin.Context) {
-	c.HTML(http.StatusOK, "user_new.html", gin.H{
-		"activeUserPage": "active",
-		"title":          "Create a New User",
-	})
+	c.HTML(http.StatusOK, "user_new.html", nil)
 }
 
 func (h *userHandler) Create(c *gin.Context) {
