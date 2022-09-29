@@ -16,6 +16,7 @@ type Repository interface {
 	FindById(ID int) (Transaction, error)
 	Save(transaction Transaction) (Transaction, error)
 	Update(transaction Transaction) (Transaction, error)
+	FindAll() ([]Transaction, error)
 }
 
 // To find transactions by campaign id, ordered by descending id
@@ -60,4 +61,13 @@ func (r *repository) FindById(ID int) (Transaction, error) {
 		return transaction, err
 	}
 	return transaction, nil
+}
+
+func (r *repository) FindAll() ([]Transaction, error) {
+	var transactions []Transaction
+	err := r.db.Preload("User").Preload("Campaign").Order("id desc").Find(&transactions).Error
+	if err != nil {
+		return transactions, err
+	}
+	return transactions, nil
 }

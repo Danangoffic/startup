@@ -1,0 +1,89 @@
+{{ define "content" }}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Create a new Campaign</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <!-- <li class="breadcrumb-item"><a href="#">Home</a></li> -->
+                    <li class="breadcrumb-item"><a href="/campaigns">Campaigns</a></li>
+                    <li class="breadcrumb-item active">New Campaign</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-8">
+                {{ if .Error }}
+                <div class="alert alert-danger">
+                    {{.Error}}
+                </div>
+                {{ end }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="card">
+                    <!-- <div class="card-header">
+                        <h3 class="card-title">List of User</h3>
+                    </div> -->
+                    <div class="card-body">
+                        <form action="/campaigns" method="post">
+                            <div class="form-group">
+
+                                <label for="user">User</label>
+                                <select name="user_id" id="user_id" class="form-control" required>
+                                    <option value="" selected>--Select User--</option>
+                                    {{range .Users}}
+                                        {{ if eq .ID $.UserID }}
+                                        <option value="{{.ID}}" selected>{{.Name}}</option>
+                                        {{ else }}
+                                        <option value="{{.ID}}">{{.Name}}</option>
+                                        {{ end }}
+                                    {{end}}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" id="name" placeholder="Enter name" class="form-control" required value="{{.Name}}">
+                            </div>
+                            <div class="form-group">
+                                <label for="short_description">Short Description</label>
+                                <input type="text" name="short_description" id="short_description" placeholder="Enter short description" class="form-control" required {{.ShortDescription}}>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea name="description" placeholder="Enter Description" id="description" class="form-control">{{.Description}}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="perks">Perks</label>
+                                <input type="text" name="perks" id="perks" placeholder="Enter perks, separate with comma (,)" class="form-control" required value="{{.Perks}}">
+                            </div>
+                            <div class="form-group">
+                                <label for="goal_amount">Goal Amount</label>
+                                <input type="number" name="goal_amount" id="goal_amount" min="0" placeholder="Enter Goal Amount" class="form-control" required value="{{.GoalAmount}}">
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.card -->
+
+</section>
+{{ end }}
